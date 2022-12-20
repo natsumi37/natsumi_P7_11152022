@@ -1,0 +1,1 @@
+Student Project at OpenClassrooms, developing both front-end and back-end from the scratch
