@@ -11,8 +11,8 @@ module.exports = (req, res, next) => {
       req.auth = { userId };
       next();
     }
-  } catch {
-    req.status(401).json({
+  } catch(error) {
+    res.status(401).json({
       error: error
     });
   }

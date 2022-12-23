@@ -17,7 +17,7 @@ exports.signup = (req, res, next) => {
         profilePicUrl: url + "/images/users" + req.file.filename
       });
       console.log(user)
-      user.save().then(
+      User.signupUser().then(
         () => {
           res.status(201).json({
             message: "User added!"
@@ -35,7 +35,7 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-  User.login({ email: req.body.email }).then(
+  User.loginUser({ email: req.body.email }).then(
     (user) => {
       if (!user) {
         return res.status(401).json({
@@ -76,7 +76,7 @@ exports.login = (req, res, next) => {
 };
 
 exports.deleteUser = (req, res, next) => {
-  User.delete({ _id: req.params.id }).then(
+  User.removeUser({ _id: req.params.id }).then(
     (user) => {
       const filename = user.profilePicUrl.split("/users/")[1];
       fs.unlink("images/users/" + filename, () => {
