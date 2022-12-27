@@ -7,16 +7,19 @@
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.1",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "express": "^4.18.2",
     "http-errors": "~1.6.3",
     "jade": "^0.29.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "morgan": "~1.9.1",
     "multer": "^1.4.5-lts.1",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "mysql2": "^2.3.3",
+    "sequelize": "^6.28.0"
   },
   "description": "Node.js Restful CRUD API with Node.js, Express and MySQL",
   "main": "server.js",
