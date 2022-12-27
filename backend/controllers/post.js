@@ -2,6 +2,7 @@ const Post = require("../models/post");
 const fs = ("fs");
 
 exports.getAllPosts = (req, res, next) => {
+  console.log("getAllPosts connected!")
   Post.findAll().then(
     (posts) => {
       res.status(200).json(posts);
@@ -16,7 +17,7 @@ exports.getAllPosts = (req, res, next) => {
 };
 
 exports.getOnePost = (req, res, next) => {
-  Post.findOne({ id: req.params.id }).then(
+  Post.findByPk({ id: req.params.id }).then(
     (post) => {
       res.status(200).json(post);
     }
@@ -30,29 +31,22 @@ exports.getOnePost = (req, res, next) => {
 };
 
 exports.createPost = (req, res, next) => {
+  console.log("createPost connected!");
+  console.log(req.body.post);
+  const url = req.protocol + "://" + req.get("host");
+  let contentImgUrl = "";
   if (req.file) {
-    const url = req.protocol + "://" + req.get("host");
-    req.body.post = JSON.parse(req.body.post);
-    const post = new Post({
-      title: req.body.post.title,
-      content: req.body.post.content,
-      contentImgUrl: url + "/images/posts/" + req.file.filename,
-      userId: req.auth.userId,
-      readPostId: [],
-      likePostId: []
-    });
-    console.log(post);
-  } else {
-    const post = new Post({
-      title: req.body.title,
-      content: req.body.content,
-      contentImgUrl: null,
-      userId: req.auth.userId,
-      readPostId: [],
-      likePostId: []
-    });
-    console.log(post);
+    contentImgUrl = url + "/images/posts/" + req.file.filename;
   }
+  const post = new Post({
+    title: req.body.post.title,
+    content: req.body.post.content,
+    contentImgUrl,
+    userId: req.auth.userId,
+    readPostId: [],
+    likePostId: []
+  });
+  console.log(post);
   Post.create().then(
     () => {
       res.status(201).json({
@@ -69,12 +63,12 @@ exports.createPost = (req, res, next) => {
 };
 
 exports.modifyPost = (req, res, next) => {
-  let post = new Post({ id: req.params.id });
+  let post = new Post({ post_id: req.params.id });
   if (req.file) {
     const url = req.protocol + "://" + req.get("host");
     req.body.post = JSON.parse(req.body.post);
     post = {
-      id: req.params.id,
+      post_id: req.params.id,
       title: req.body.post.title,
       content: req.body.post.content,
       contentImgUrl: url + "/images/posts/" + req.file.filename,
@@ -84,7 +78,7 @@ exports.modifyPost = (req, res, next) => {
     };
   } else {
     post = {
-      id: req.params.id,
+      post_id: req.params.id,
       title: req.body.title,
       content: req.body.content,
       contentImgUrl: req.body.contentImgUrl,
@@ -94,7 +88,7 @@ exports.modifyPost = (req, res, next) => {
     };
   }
   console.log(post)
-  Post.modifyOne({ id: req.params.id }).then(
+  Post.update({ post }).then(
     () => {
       res.status(201).json({
         message: "Modified post!"
@@ -110,11 +104,11 @@ exports.modifyPost = (req, res, next) => {
 };
 
 exports.deletePost = (req, res, next) => {
-  Post.findById({ id: req.params.id }).then(
+  Post.findByPk({ post_id: req.params.id }).then(
     (post) => {
       const filename = post.contentImgUrl.split("/posts/")[1];
       fs.unlink("images/posts/" + filename, () => {
-        Post.deleteOne({ id: req.params.id }).then(
+        Post.destroy({ post_id: req.params.id }).then(
           () => {
             res.status(200).json({
               message: "Deleted post!"

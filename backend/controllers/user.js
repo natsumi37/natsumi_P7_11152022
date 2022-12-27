@@ -4,20 +4,23 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 exports.signup = (req, res, next) => {
-  bcrypt.hash(req.body.password, 10).then(
+  console.log(req.body)
+  bcrypt.hash(req.body.user.password, 10).then(
     (hash) => {
       const url = req.protocol + "://" + req.get("host");
-      req.body.user = JSON.parse(req.body.user);
-
+      let profilePicUrl = "";
+      if (req.file) {
+        profilePicUrl = url + "/images/users" + req.file.filename
+      }
       const user = new User({
         firstName: req.body.user.firstName,
         lastName: req.body.user.lastName,
         email: req.body.user.email,
         password: hash,
-        profilePicUrl: url + "/images/users" + req.file.filename
+        profilePicUrl
       });
       console.log(user)
-      User.signupUser().then(
+      user.save().then(
         () => {
           res.status(201).json({
             message: "User added!"
@@ -35,7 +38,7 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-  User.loginUser({ email: req.body.email }).then(
+  User.findOne({ where: { email: req.body.email } }).then( 
     (user) => {
       if (!user) {
         return res.status(401).json({
@@ -57,6 +60,8 @@ exports.login = (req, res, next) => {
             userId: user._id,
             token: token
           });
+          console.log(userId)
+          console.log(token)
         }
       ).catch(
         (error) => {
@@ -75,12 +80,13 @@ exports.login = (req, res, next) => {
   );
 };
 
-exports.deleteUser = (req, res, next) => {
-  User.removeUser({ _id: req.params.id }).then(
+exports.delete = (req, res, next) => {
+  User.findByPk({ user_id: req.params.id }).then(
     (user) => {
+      console.log(req.params.id);
       const filename = user.profilePicUrl.split("/users/")[1];
       fs.unlink("images/users/" + filename, () => {
-        User.delete({ _id: req.params.id }).then(
+        User.destroy({ where: { user_id: req.params.id }}).then(
           () => {
             res.status(200).json({
               message: "User deleted!"

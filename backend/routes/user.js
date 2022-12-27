@@ -8,7 +8,7 @@ const userCtrl = require("../controllers/user");
 
 router.post("/signup", multer, userCtrl.signup);
 router.post("/login", userCtrl.login);
-router.delete("/:id", auth, userCtrl.deleteUser);
+router.delete("/delete/:id", auth, userCtrl.delete);
 /* how can I set the url of deleting an account 
  /api/auth/userId?
  /api/posts/userId?
