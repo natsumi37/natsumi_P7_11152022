@@ -38,8 +38,8 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-  User.findOne({ where: { email: req.body.email } }).then( 
-    (user) => {
+  User.findOne({ where: { email: req.body.email } }).then(
+    (user)=> {
       if (!user) {
         return res.status(401).json({
           error: new Error("User not found!")
@@ -47,6 +47,8 @@ exports.login = (req, res, next) => {
       }
       bcrypt.compare(req.body.password, user.password).then(
         (valid) => {
+          console.log(req.body.password)
+          console.log(user.password)
           if (!valid) {
             return res.status(401).json({
               error: new Error("Incorrect password!")
@@ -60,8 +62,7 @@ exports.login = (req, res, next) => {
             userId: user._id,
             token: token
           });
-          console.log(userId)
-          console.log(token)
+          console.log(res)
         }
       ).catch(
         (error) => {
