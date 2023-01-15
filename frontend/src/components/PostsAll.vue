@@ -1,20 +1,17 @@
 <template>
   <main class="post"> <!-- how to write semantic tags in vue -->
     <h1>See all posts</h1>
-    <div class="align-cards" v-for="post in posts" v-bind:key="post.postId">
-      <RouterLink :to="`/posts/${post.postId}`">
+    <div class="align-cards" v-for="post in posts" v-bind:key="post.post_id">
+      <RouterLink :to="`/posts/${post.post_id}`">
         <div class="card-container">
           <h2 class="card-title">{{ post.title }}</h2>
           <p class="card-text">{{ post.content }}</p>
-          <div class="card-media">
-            <img :src="post.contentImg" :alt="'picture of ' + post.title">
+          <div class="card-media" v-show="post.contentImgUrl">
+            <img :src="post.contentImgUrl" :alt="'picture of ' + post.title">
           </div>
           <div class="card-footer">
-            <button type="button" class="card-button" :class="{ selected: likePost }" @click="toggleRead(post)">
-              <i class="fa-solid fa-thumbs-up"></i>
-            </button>
-            <button type="button" class="card-button" :class="{ selected: commentPost }" @click="toggleComment(post)">
-              <i class="fa-solid fa-reply"></i>
+            <button type="button" class="card-button" :class="{ selected: likePost }" @click="toggleLike(post)">
+              <font-awesome-icon icon="fa-solid fa-thumbs-up" />
             </button>
           </div>
         </div>
@@ -24,25 +21,27 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapState, mapGetters } from "vuex"
 
 export default {
   name: "PostsAll",
   data: function() {
     return {
-      likePost: false,
-      commentPost: false
+      likePost: false
     }
   },
-  computed: mapState([
-    "posts"
-  ]),
+  computed: {
+    ...mapState({
+      posts: "allPosts",
+      auth: "auth"
+    })
+  },
+  beforeMount(){
+    this.getAllPosts()
+  },
   methods: {
-    toggleRead(post) {
-      post.likePost = !post.likePost
-    },
-    toggleComment(post) {
-      post.commentPost = !post.commentPost
+    getAllPosts() {
+      return this.$store.dispatch("getAllPosts");
     }
   }
 }

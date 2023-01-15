@@ -1,8 +1,8 @@
 <template>
   <main class="post"> <!-- how to write semantic tags in vue -->
     <h1>See unread posts</h1>
-    <div class="align-cards" v-for="post in posts" v-bind:key="post.postId">
-      <RouterLink :to="`/posts/${post.postId}`">
+    <div class="align-cards" v-for="post in posts" v-bind:key="post.post_id">
+      <RouterLink :to="`/posts/${post.post_id}`">
         <div class="card-container">
           <h2 class="card-title">{{ post.title }}</h2>
           <p class="card-text">{{ post.content }}</p>
@@ -34,19 +34,23 @@ export default {
       commentPost: false
     }
   },
-  computed:
-  mapState([
-    "posts"
-  ]),
-  ...mapGetters([
-    "getUnreadPosts"
-  ]),
+  computed: {
+    ...mapState({
+      posts: "unreadPosts"
+    })
+  },
+  beforeMount() {
+    this.getUnreadPosts()
+  },
   methods: {
     toggleRead(post) {
       post.likePost = !post.likePost
     },
     toggleComment(post) {
       post.commentPost = !post.commentPost
+    },
+    getUnreadPosts() {
+      return this.$store.dispatch("getUnreadPosts")
     }
   }
 }

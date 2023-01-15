@@ -3,17 +3,16 @@
     <h1>Read a post</h1>
     <div class="align-cards">
       <div class="card-container">
-        <h2 class="card-title">{{ posts.title }}</h2>
-        <p class="card-text">{{ posts.context }}</p>
-        <div class="card-media">
-          <img :src="posts.contentImg" :alt="'picture of ' + posts.title">
+        <h2 class="card-title">{{ post.title }}</h2>
+        <p class="card-text">{{ post.content }}</p>
+        <div class="card-media" v-show="post.contentImgUrl">
+          <img :src="post.contentImgUrl" :alt="'picture of ' + post.title">
         </div>
         <div class="card-footer">
-          <button type="button" class="card-button" :class="{ selected: likePost }" @click="toggleRead()">
-            <i class="fa-solid fa-thumbs-up"></i>
-          </button>
-          <button type="button" class="card-button" :class="{ selected: commentPost }" @click="toggleComment()">
-            <i class="fa-solid fa-reply"></i>
+          <button type="button" class="card-button" v-show="post.userId === auth.userId" @click="modifyPost">Modify</button>
+          <button type="button" class="card-button" v-show="post.userId === auth.userId" @click="deletePost">Delete</button>
+          <button type="button" class="card-like" :class="{ selected: likePost }" @click="toggleLike">
+            <font-awesome-icon icon="fa-solid fa-thumbs-up" />
           </button>
         </div>
       </div>
@@ -29,18 +28,44 @@ export default {
   data: function() {
     return {
       likePost: false,
-      commentPost: false
     }
   },
-  computed: mapState([
-    "posts"
-  ]),
+  computed: {
+    ...mapState({
+    post: "singlePost",
+    auth: "auth"
+  })},
+  beforeMount(){
+    this.getSinglePost()
+  },
   methods: {
-    toggleRead() {
-      this.likePost = !this.likePost
+    getSinglePost() {
+      return this.$store.dispatch("getSinglePost")
+      .then(
+        () => {
+          this.$store.dispatch("readPost", {
+            postId: this.post.postId,
+            userId: this.auth.userId
+          });
+        }
+      )
     },
-    toggleComment() {
-      this.commentPost = !this.commentPost
+    toggleLike() {
+      this.likePost = !this.likePost;
+      return this.$store.dispatch("likePost", {
+        postId: this.post.postId,
+        userId: this.auth.userId
+      }); 
+    },
+    modifyPost() {
+      return this.$router.push(`/posts/modify/${this.post.postId}`);
+    },
+    deletePost() {
+      return this.$store.dispatch("deleteSinglePost").then(
+        () => {
+          this.$router.push("/posts");
+        }
+      )
     }
   }
 }
@@ -48,7 +73,7 @@ export default {
 
 </script>
 
-<style lang="scss">
+<style lang="scss" scpoed>
 .post {
   width: 100%;
   padding: 40px;
@@ -90,6 +115,16 @@ export default {
     margin-top: auto;
   }
   &-button {
+    border: solid 3px black;
+    border-radius: 5px;
+    background: none;
+    &:hover {
+      background-color: orangered;
+      color: white;
+      border: none;
+    }
+  }
+  &-like {
     background: none;
     border: none;
     .selected {
