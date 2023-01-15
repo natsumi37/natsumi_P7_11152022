@@ -2,10 +2,10 @@
   <div class="post">
     <h1>Our employees</h1>
     <div class="display-employees">
-      <div class="card" style="width: calc(25% - 20px);"  v-for="user in users" v-bind:key="user.userId">
-        <img  class="card-img-top" :src="user.profilePic" :alt="'profile picture of ' + user.fullName">
+      <div class="card" style="width: calc(25% - 20px);"  v-for="user in users" v-bind:key="user.user_id">
+        <img  class="card-img-top" :src="user.profilePicUrl" :alt="'profile picture of ' + user.firstName + ' ' + user.lastName">
         <div class="card-body">
-          <h5 class="card-title">{{ user.fullName }}</h5>
+          <h5 class="card-title">{{ user.firstName }} {{ user.lastName }}</h5>
           <p class="card-text">{{ user.email }}</p>
         </div>
       </div>
@@ -22,11 +22,20 @@ export default {
     return {
     }
   },
-  computed: 
-  mapState({
-    users: state => state.users,
-    fullName: state => `${ state.users.firstName } ${ state.users.lastName }`
-  })
+  computed: {
+    ...mapState({
+      users: "allUsers",
+
+    })
+  },
+  beforeMount(){
+    this.getAllUsers()
+  },
+  methods: {
+    getAllUsers() {
+      return this.$store.dispatch("getAllUsers");
+    }
+  }
 }
 
 </script>
