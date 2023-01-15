@@ -1,4 +1,5 @@
 const { Sequelize, DataTypes } = require("sequelize");
+
 const sequelize = new Sequelize("testdb", "root", "mysqlpassword", {
   host: "localhost",
   dialect: "mysql",
@@ -36,5 +37,5 @@ const User = sequelize.define("users", {
   }
 });
 
-console.log(User === sequelize.models.users);
+console.log("table: users is ", User === sequelize.models.users);
 module.exports = User;
