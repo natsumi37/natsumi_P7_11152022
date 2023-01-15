@@ -9,11 +9,11 @@ import "bootstrap"
 
 // Font Awesome
 import { library } from "@fortawesome/fontawesome-svg-core"
-import { faHouse, faPencil, faEnvelope } from "@fortawesome/free-solid-svg-icons"
+import { faHouse, faPencil, faEnvelope, faThumbsUp, faRightFromBracket } from "@fortawesome/free-solid-svg-icons"
 import { faFaceSmile } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
 
-library.add(faHouse, faPencil, faEnvelope, faFaceSmile)
+library.add(faHouse, faPencil, faEnvelope, faFaceSmile, faThumbsUp, faRightFromBracket)
 
 createApp(App)
 .component("font-awesome-icon", FontAwesomeIcon)
