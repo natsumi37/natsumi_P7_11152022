@@ -4,16 +4,23 @@
 
     <div class="mb-2">
       <label for="loginEmail" class="form-label">Email address</label>
-      <input type="email" class="form-control" id="loginEmail" v-model="loginEmail" placeholder="example@groupomania" required>
-      <span class="errorMessage" v-if="error=true">Input error</span>
+      <input type="email" class="form-control" id="loginEmail" v-model="email" placeholder="example@groupomania" required>
     </div>
     <div class="mb-2">
       <label for="loginPassword" class="form-label">Password</label>
-      <input type="password" class="form-control" id="loginPassword" v-model="loginPassword" required>
-      <span class="errorMessage" v-if="error=true">Input error</span>
+      <input type="password" class="form-control" id="loginPassword" v-model="password" required>
     </div>
 
-    <router-link to="/posts"><button class="form-btn" type="submit" @click="userLogin">Login</button></router-link>
+    <p class="error" v-if="errors.length">
+      <b>Please correct the following field(s):</b>
+      <ul>
+        <li v-for="error in errors" v-bind:key="error.index">{{ error }}</li>
+      </ul>
+    </p>
+
+    <!-- <router-link to="/posts"> -->
+      <button class="form-btn" type="button" @click="login">Login</button>
+    <!-- </router-link> -->
   </div>
 </template>
 
@@ -23,43 +30,43 @@ export default {
   name: "UserLogin",
   data: function() {
     return {
-      loginEmail: "",
-      loginPassword: ""
+      errors: [],
+      email: "",
+      password: ""
     }
   },
   methods: {
-    async post(input) {
-      try {
-        const url = "https://localhost:3000/"
-        const response = await fetch (url + "auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(input)
-        })
-        const data = await response.json()
-        console.log(data)
-      } catch(error) {
-        console.log(error)
+    checkUserForm() {
+      this.errors = [];
+
+      if (!this.email.match(/^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/)) {
+        this.errors.push("Email")
       }
-      // window.location.href = "contents"
+      if (!this.password) {
+        this.errors.push("Password")
+      }
+      if (!this.errors.length) {
+        return true
+      }
     },
-    checkUserInput() {
-      let error = false
-      if (!this.loginEmail.value.match(/^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/)) {
-        error = true
+    login() {
+      if (this.checkUserForm() === true) {
+        this.$store.dispatch("login", {
+          email: this.email,
+          password: this.password
+        }).then(
+          () => {
+            this.$router.push("/posts")
+            console.log(this.$store.state.auth)
+          }
+        ).catch(
+          (error) => {
+            throw error
+          }
+        );
+      } else {
+        console.log("Found input errors!")
       }
-      if (!this.loginPassword.value) {
-        error = true
-      }
-      return error
-    },
-    userLogin() {
-      const user = {
-        email: this.loginEmail,
-        password: this.loginPassword
-      }
-      console.log(user)
-      this.post(user)
     }
   }
 }
@@ -96,9 +103,9 @@ export default {
   }
 }
 
-.errorMessage {
+.error {
+  margin-top: 20px;
   color: orangered;
 }
-
 
 </style>

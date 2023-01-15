@@ -1,26 +1,22 @@
 <template>
   <div class="form-signup">
     <h2 class="form-header">Signup</h2>
-
+    
     <div class="mb-2">
       <label for="firstName" class="form-label">First Name</label>
       <input type="text" class="form-control" id="firstName" v-model="firstName" required>
-      <span class="errorMessage" v-if="error=true">Input error</span>
     </div>
     <div class="mb-2">
       <label for="lastName" class="form-label">Last Name</label>
       <input type="text" class="form-control"  id="lastName" v-model="lastName" required>
-      <span class="errorMessage" v-if="error=true">Input error</span>
     </div>
     <div class="mb-2">
       <label for="email" class="form-label">Email address</label>
       <input type="email" class="form-control"  id="email" v-model="email" placeholder="example@groupomania.com" required>
-      <span class="errorMessage" v-if="error=true">Input error</span>    
     </div>
     <div class="mb-2">
       <label for="password" class="form-label">Password</label>
       <input type="password" class="form-control" id="password" v-model="password" required>
-      <span class="errorMessage" v-if="error=true">Input error</span>
     </div>
     <div class="mb-2">
       <label for="profilePicUrl" class="form-label">Profile picture</label>
@@ -31,20 +27,28 @@
         accept=".jpg, .jpeg, .png"
         @change="uploadProfilePic"
       />
-      <span class="errorMessage" v-if="error=true">Input error</span>
     </div>
 
-    <router-link to="/posts"><button class="form-btn" type="submit" @click="userSignup">Signup</button></router-link>
+    <p class="error" v-if="errors.length">
+      <b>Please correct the following field(s):</b>
+      <ul>
+        <li v-for="error in errors" v-bind:key="error.index">{{ error }}</li>
+      </ul>
+    </p>
+
+    <!-- <router-link to="/posts"> -->
+      <button class="form-btn" type="button" @click="signup">Signup</button>
+    <!-- </router-link> -->
   </div>
 </template>
 
 <script>
-import UserDataService from '@/services/UserDataService'
-
 export default {
   name: "UserSignup",
   data: function() {
     return {
+      errors: [],
+      isSignup: false,
       firstName: "",
       lastName: "",
       email: "",
@@ -64,72 +68,48 @@ export default {
         this.profilePicUrl = reader.result
       }
     },
-    checkUserInput() {
-      let error = false
+    checkUserForm() {
+      this.errors = [];
 
-      if (!this.firstName.value.match(/^[A-Za-z]*$/)) {
-        error = true
+      if (!this.firstName || !this.firstName.match(/^[A-Za-z]*$/)) {
+        this.errors.push("First Name");
       }
-      if (!this.lastName.value.match(/^[A-Za-z]*$/)) {
-        error = true
+      if (!this.lastName || !this.lastName.match(/^[A-Za-z]*$/)) {
+        this.errors.push("Last name");
       }
-      if (!this.email.value.match(/^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/)) {
-        error = true
+      if (!this.email || !this.email.match(/^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/)) {
+        this.errors.push("Email");
       }
-      if (!this.password.value) {
-        error = true
+      if (!this.password) {
+        this.errors.push("Password")
       }
-      if (!this.profilePicUrl.value) {
-        error = true
+      if (!this.errors.length) {
+        return true;
       }
-      return error
     },
-    async createUser() {
-      const data = {
-        firstName: this.firstName,
-        lastName: this.lastName,
-        email: this.email,
-        password: this.password,
-        profilePicUrl: this.profilePicUrl
-      };
-
-      UserDataService.create(data).then(
-        (res) => {
-          this.user = res.data;
-          console.log(res.data);
-        }
-      ).catch(
-        (error) => {
-          console.log(error);
-        }
-      );
+    signup() {
+      if (this.checkUserForm() === true) {
+        return this.$store.dispatch("signup", {
+          firstName: this.firstName,
+          lastName: this.lastName,
+          email: this.email,
+          password: this.password,
+          profilePicUrl: this.profilePicUrl
+        }).then(
+          () => {
+            console.log("User signup successfully!")
+            this.$router.push("/login")
+          }
+        ).catch(
+          (error) => {
+            throw error
+          }
+        );
+      } else {
+        console.log("Found input errors!");
+      }
+      this.isSignup = true;
     }
-    // async post(input) {
-    //   try {
-    //     const url = "https://localhost:3000/"
-    //     const response = await fetch (url + "auth/signup", {
-    //       method: "POST",
-    //       headers: { "Content-Type": "application/json" },
-    //       body: JSON.stringify(input)
-    //     })
-    //     const data = await response.json()
-    //     console.log(data)
-    //   } catch(error) {
-    //     console.log(error)
-    //   }
-    //   // window.location.href = "contents"
-    // },
-    // userSignup() {
-    //   const user = {
-    //     firstName: this.firstName,
-    //     lastName: this.lastName,
-    //     email: this.email,
-    //     password: this.password,
-    //     profilePic: this.profilePic
-    //   }
-    //   console.log(user)
-    //   this.post(user)
-    // }
   }
 }
 
@@ -138,7 +118,7 @@ export default {
 <style lang="scss">
 .form {
   &-signup {
-    width: 75%; /* need responsive */
+    width: 75%;
     margin: 20px auto;
     a {
       text-decoration: none;
@@ -165,7 +145,8 @@ export default {
   }
 }
 
-.errorMessage {
+.error {
+  margin-top: 20px;
   color: orangered;
 }
 

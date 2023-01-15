@@ -15,7 +15,14 @@
         <input class="form-control" type="file" id="contentImg" @change="uploadContentImg">
       </div>
 
-      <button class="form-btn" type="submit" @click="createPost">Post</button>
+      <p class="error" v-if="errors.length">
+        <b>Please fill up the following field(s):</b>
+        <ul>
+          <li v-for="error in errors" v-bind:key="error.index">{{ error }}</li>
+        </ul>
+      </p>
+
+      <button class="form-btn" type="button" @click="createPost">Post</button>
     </div>
   </main>
 </template>
@@ -26,26 +33,16 @@ export default {
   name: "PostCreate",
   data: function() {
     return {
+      errors: [],
+      title: "",
+      content: "",
+      contentImgUrl: "",
+      userId: "",
+      readPostId: [],
+      likePostId: []
     }
   },
   methods: {
-    getUrl() {
-      const param = new URLSearchParams(window.location.search)
-      const postId = param.get("id")
-      const url = "https://localhost:3000/"
-      return url + postId
-    },
-    async getPost() {
-      const url = this.getUrl()
-      try {
-        // wonder if the function "getUrl()" can be here or not
-        const response = await fetch(url)
-        const data = await response.json()
-        console.log(data)
-      } catch(error) {
-        console.log(error)
-      }
-    },
     uploadContentImg(event) {
       const file = event.target.files[0]
       this.createContentImg(file)
@@ -57,28 +54,37 @@ export default {
         this.contentImg = reader.result
       }
     },
-    async post(post) {
-      try {
-        const url = "https://localhost:3000/"
-        const response = await fetch (url + "posts", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(post)
-        })
-        const data = await response.json()
-      } catch(error) {
-        console.log(error)
+    checkUserForm() {
+      this.errors = []
+
+      if (!this.title) {
+        this.errors.push("Title");
       }
-      // window.location.href = "posts"
+      if (!this.content) {
+        this.errors.push("Content");
+      }
+      if (!this.errors.length) {
+        return true;
+      }
     },
     createPost() {
-      const postObj = {
-        title: this.title,
-        content: this.content,
-        contentImg: this.contentImg
+      if (this.checkUserForm() === true) {
+        return this.$store.dispatch("createSinglePost", {
+          title: this.title,
+          content: this.content,
+          contentImgUrl: this.contentImgUrl,
+          userId: "",
+          readPostId: [],
+          likePostId: []
+        }).then(
+          () => {
+            console.log("Post created successfully!");
+            this.$router.push("/posts");
+          }
+        )
+      } else {
+        console.log("Found input errors!");
       }
-      console.log(postObj)
-      this.post(postObj)
     }
   }
 }
@@ -104,6 +110,11 @@ export default {
     color: white;
     border: none;
   }
+}
+
+.error {
+  margin-top: 20px;
+  color: orangered;
 }
 
 </style>
