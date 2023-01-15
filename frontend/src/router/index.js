@@ -1,11 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router"
 import UserSignupView from "@/views/UserSignupView.vue"
-// import UserLoginView from "@/views/UserLoginView.vue"
-// import PostsAllView from "@/views/PostsAllView.vue"
-// import PostsUnreadView from "@/views/PostsUnreadView.vue"
-// import PostCreateView from "@/views/PostCreateView.vue"
-// import PostReadView from "@/views/PostReadView.vue"
-// import EmployeesAllView from "@/views/EmployeesAllView.vue"
+import UserLoginView from "@/views/UserLoginView.vue"
+import PostsAllView from "@/views/PostsAllView.vue"
+import PostsUnreadView from "@/views/PostsUnreadView.vue"
+import PostReadView from "@/views/PostReadView.vue"
+import PostCreateView from "@/views/PostCreateView.vue"
+import PostModifyView from "@/views/PostModifyView.vue"
+import EmployeesAllView from "@/views/EmployeesAllView.vue"
+import { authorizedToken } from "./guards"
 
 const routes = [
   {
@@ -16,32 +18,43 @@ const routes = [
   {
     path: "/login",
     name: "login",
-    component: () => import("../views/UserLoginView.vue")
+    component: UserLoginView
   },
   {
     path: "/posts",
     name: "postsAll",
-    component: () => import("../views/PostsAllView.vue")
+    component: PostsAllView,
+    meta: { requiresAuth: true }
   },
   {
     path: "/posts/unread",
     name: "postsUnread",
-    component: () => import("../views/PostsUnreadView.vue")
+    component: PostsUnreadView,
+    meta: { requiresAuth: true }
   },
   {
     path: "/posts/:id",
     name: "postRead",
-    component: () => import("../views/PostReadView.vue")
+    component: PostReadView,
+    meta: { requiresAuth: true }
   },
   {
     path: "/posts/create",
     name: "postCreate",
-    component: () => import("../views/PostCreateView.vue")
+    component: PostCreateView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: "/posts/modify/:id",
+    name: "postModify",
+    component: PostModifyView,
+    meta: { requiresAuth: true }
   },
   {
     path: "/employees",
     name: "employees",
-    component: () => import("../views/EmployeesAllView.vue")
+    component: EmployeesAllView,
+    meta: { requiresAuth: true }
   }
 ]
 
@@ -50,4 +63,6 @@ const router = createRouter({
   routes
 })
 
-export default router
+router.beforeEach(authorizedToken);
+
+export default router;
