@@ -1,5 +1,5 @@
 <template>
-  <nav class="nav-container fixed-bottom">
+  <nav class="nav-container">
     <ul class="nav-items">
       <router-link to="/posts">
         <li title="See all posts">
@@ -17,7 +17,7 @@
         <li title="See unread posts">
           <p>Unread</p>
           <font-awesome-icon icon="fa-solid fa-envelope" />
-          <p class="notification" v-if="countUnreadPosts > 0">{{ countUnreadPosts }}</p>
+          <!-- <p class="notification" v-if="countUnreadPosts > 0">{{ countUnreadPosts }}</p> -->
         </li>
       </router-link>
       <router-link to="/employees">
@@ -41,22 +41,18 @@ export default {
   ...mapGetters([
     "getUnreadPosts",
     "countUnreadPosts"
-  ]),
+  ])
 }
-
-
 
 </script>
 
 <style lang="scss">
-p {
-  margin: 0;
-}
-
 .nav-container {
   width: 350px;
+  // height: 100vh;
   position: sticky;
   background-color: rgb(242, 240, 240);
+  z-index: 2;
 }
 
 .nav-items {
@@ -71,6 +67,9 @@ p {
     align-items: center;
     gap: 10px;
     padding: 20px;
+    p {
+      margin: 0;
+    }
     &:hover {
       background-color: lightgray;
     }
@@ -97,12 +96,16 @@ p {
   }
   .nav-container {
     width: 100%;
+    height: 20%;
     margin-top: auto;
+    position: sticky;
+    bottom: 0;
   }
   .nav-items {
     flex-direction: row;
     justify-content: space-evenly;
     font-size: x-large;
+    padding: 10px 10px;
   }
 }
 
