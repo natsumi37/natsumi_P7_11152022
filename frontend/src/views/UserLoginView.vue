@@ -1,8 +1,8 @@
 <template>
-  <SignupHeader></SignupHeader>
+  <SignupHeader />
   <main>
-    <SignupGreeting></SignupGreeting>
-    <UserLogin></UserLogin>
+    <SignupGreeting />
+    <UserLogin />
   </main>
 </template>
 
