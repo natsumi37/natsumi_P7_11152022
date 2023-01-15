@@ -2,17 +2,34 @@
   <header>
     <ul class="nav">
       <li class="nav-item">
-        <router-link class="routerLink" to="/"><button @click="signup = true" class="btn-signup" type="button">Signup</button></router-link>
+        <button @click="switchSignupForm" class="btn-signup" type="button">Signup</button>
       </li>
       <li class="nav-item">
-        <router-link class="routerLink" to="/login"><button @click="signup = false" class="btn-signup" type="button">Login</button></router-link>
+        <button @click="swithLoginForm" class="btn-signup" type="button">Login</button>
       </li>
     </ul>
   </header>
 </template>
 
 <script>
-
+export default {
+  name: "SignupHeader",
+  data: function() {
+    return {
+      signup: true
+    }
+  },
+  methods: {
+    switchSignupForm() {
+      this.signup = true;
+      this.$router.push("/");
+    },
+    swithLoginForm() {
+      this.signup = false;
+      this.$router.push("/login");
+    }
+  }
+}
 </script>
 
 <style lang="scss">
