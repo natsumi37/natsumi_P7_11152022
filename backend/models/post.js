@@ -7,17 +7,9 @@ const sequelize = new Sequelize("testdb", "root", "mysqlpassword", {
   }
 });
 
-// async function test() {
-//   try {
-//   await sequelize.authenticate();
-//   console.log("Connected to database!");
-// } catch (error) {
-//   console.error('Unable to connect to database:', error);
-// }}
+// define "posts" table
 
-// test();
-
-const Post = sequelize.define("posts", {
+const Post = sequelize.define("Post", {
   post_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -40,13 +32,80 @@ const Post = sequelize.define("posts", {
     foreignKey: true,
     allowNull: false
   },
-  readPostId: [{
-    type: DataTypes.STRING
-  }],
-  likePostId: [{
-    type: DataTypes.STRING
-  }]
 });
 
-console.log(Post === sequelize.models.posts);
-module.exports = Post;
+// define "readpost" table
+
+const ReadPost = sequelize.define("ReadPost", {
+  readpost_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: false
+  },
+  postId: {
+    type: DataTypes.INTEGER,
+    foreignKey: true,
+    allowNull: false
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    foreignKey: true,
+    allowNull: false
+  }},
+  {
+  tableName: "readpost",
+  }
+);
+
+// // define "likepost" table
+
+const LikePost = sequelize.define("LikePost", {
+  likepost_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: false
+  },
+  postId: {
+    type: DataTypes.INTEGER,
+    foreignKey: true,
+    allowNull: false
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    foreignKey: true,
+    allowNull: false
+  }},
+  {
+  tableName: "likepost",
+  }
+);
+
+// // define sequelize associations
+
+Post.hasMany(ReadPost, {
+  foreignKey: "postId"
+});
+ReadPost.belongsTo(Post, {
+  foreignKey: "postId",
+  targetKey: "post_id"
+});
+
+Post.hasMany(LikePost, {
+  foreignKey: "postId"
+});
+LikePost.belongsTo(Post, {
+  foreignKey: "postId",
+  targetKey: "post_id"
+});
+
+// // check the model schemas of sequelize and mysql
+
+console.log("table: posts is ", Post === sequelize.models.posts);
+console.log("table: readpost is ", ReadPost === sequelize.models.readpost);
+console.log("table: likepost is ", LikePost === sequelize.models.likepost);
+
+// // export the models
+
+module.exports = { sequelize, Post, ReadPost, LikePost };
