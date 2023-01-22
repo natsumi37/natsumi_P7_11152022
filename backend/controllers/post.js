@@ -1,9 +1,10 @@
 const { sequelize, Post, ReadPost, LikePost } = require("../models/post");
+const User = require("../models/user");
 const fs = require("fs");
 const { Sequelize, Op } = require("sequelize");
 
 exports.getAllPosts = (req, res, next) => {
-  Post.findAll({ include: [ReadPost, LikePost] }).then(
+  Post.findAll({ include: [User, ReadPost, LikePost] }).then(
     (posts) => {
       res.status(200).json(posts)
     }
@@ -19,7 +20,7 @@ exports.getAllPosts = (req, res, next) => {
 exports.getOnePost = (req, res, next) => {
   Post.findOne({
     where: { post_id: req.params.id },
-    include: [ReadPost, LikePost]
+    include: [User, ReadPost, LikePost]
   }).then(
     (post) => {
       res.status(200).json(post);
@@ -43,9 +44,8 @@ exports.createPost = (req, res, next) => {
     title: req.body.post.title,
     content: req.body.post.content,
     contentImgUrl,
+    postBy: req.body.post.postBy,
     userId: req.auth.userId,
-    // readPostId: null,
-    // likePostId: null
   });
   console.log(post);
   post.save().then(
@@ -73,7 +73,6 @@ exports.modifyPost = async (req, res, next) => {
     title: req.body.post.title,
     content: req.body.post.content,
     contentImgUrl,
-    userId: req.auth.userId,
   }).then(
     () => {
       res.status(201).json({
@@ -205,48 +204,15 @@ exports.likePost = async (req, res, next) => {
       }
     );
   }
-
-  //   res.status(204).json({
-  //     message: "Deleted LikePost!"
-  //   });
-  // }
-
-  // const likePost = new LikePost({
-  //   postId: req.params.id,
-  //   userId: req.body.userId
-  // });
-  // sequelize.query("SELECT * FROM posts WHERE post_id IN (SELECT postId FROM likepost WHERE userId = "+req.body.userId+")").then(
-  //   ([post, meta]) => {
-  //     console.log(post)
-  //     if (!post.length) {
-  //       likePost.save().then(
-  //         () => {
-  //           res.status(201).json({
-  //             message: "Created LikePost!"
-  //           });
-  //         }
-  //       )
-  //     } else {
-  //       LikePost.destroy({ post }).then(
-  //         () => {
-  //           res.status(204).json({
-  //             message: "Deleted LikePost!"
-  //           });
-  //         }
-  //       )
-  //     }
-  //   }
-  // )
 };
 
 exports.getUnreadPosts = async (req, res, next) => {
   const [posts, meta] = await sequelize.query("SELECT * FROM posts WHERE post_id NOT IN (SELECT postId FROM readpost WHERE userId = "+req.params.id+")");
   const unreadPostIds = posts.map(post => post.post_id)
-  console.log(unreadPostIds)
 
   Post.findAll({
     where: { post_id: {[Op.in]: unreadPostIds}, userId: {[Op.ne]: req.params.id} },
-    include: [ ReadPost, LikePost ]
+    include: [ User, ReadPost, LikePost ]
   }).then(
     (posts) => {
       res.status(200).json(posts)
