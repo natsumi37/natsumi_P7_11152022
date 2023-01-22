@@ -3,6 +3,8 @@ const { ReadPost, LikePost, Post } = require("../models/post");
 const fs = require("fs");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { Sequelize, Op } = require("sequelize");
+
 
 exports.signup = (req, res, next) => {
   console.log(req.body)
@@ -97,8 +99,12 @@ exports.delete = async (req, res, next) => {
       }
     })
   }
+  const findPosts = await Post.findAll({ where: { userId: req.params.id }});
+  const userCreatedPosts = findPosts.map(post => post.post_id);
   await ReadPost.destroy({ where: { userId: req.params.id }});
+  await ReadPost.destroy({ where: { postId: {[Op.in]: userCreatedPosts} }});
   await LikePost.destroy({ where: { userId: req.params.id }});
+  await LikePost.destroy({ where: { postId: {[Op.in]: userCreatedPosts} }});
   await Post.destroy({ where: { userId: req.params.id }});
   await targetUser.destroy().then(
     () => {
