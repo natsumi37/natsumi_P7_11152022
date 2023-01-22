@@ -11,7 +11,7 @@
         <div class="card-footer">
           <button type="button" class="card-button" v-show="post.userId === auth.userId" @click="modifyPost">Modify</button>
           <button type="button" class="card-button" v-show="post.userId === auth.userId" @click="deletePost">Delete</button>
-          <button type="button" class="card-like" :class="{ selected: likePost }" @click="toggleLike">
+          <button type="button" class="card-like" :class="{ 'card-liked': isLike }" @click="likePost">
             <font-awesome-icon icon="fa-solid fa-thumbs-up" />
           </button>
         </div>
@@ -27,7 +27,7 @@ export default {
   name: "PostRead",
   data: function() {
     return {
-      likePost: false,
+      isLike: false
     }
   },
   computed: {
@@ -37,6 +37,10 @@ export default {
   })},
   beforeMount(){
     this.getSinglePost()
+    // this.colorLike()
+  },
+  mounted() {
+    this.colorLike()
   },
   methods: {
     getSinglePost() {
@@ -49,19 +53,38 @@ export default {
           });
         }
       )
+      // .then(
+      //   () => {
+      //     const liked = this.post.LikePosts.some(post => post.userId === this.auth.userId)
+      //     console.log(liked)
+      //     if (this.post.LikePosts.length && liked) {
+      //       this.isLike = true
+      //     }
+      //     console.log("this.isLike = ", this.isLike)
+      //   }
+      // )
     },
-    toggleLike() {
-      this.likePost = !this.likePost;
+    likePost() {
+      this.isLike = !this.isLike;
       return this.$store.dispatch("likePost", {
         postId: this.post.postId,
         userId: this.auth.userId
       }); 
     },
+    colorLike() {
+      console.log(this.post)
+      const liked = this.post.LikePosts.some(post => post.userId === this.auth.userId)
+      console.log(liked)
+      if (this.post.LikePosts.length && liked) {
+        this.isLike = true
+      }
+      console.log("this.isLike = ", this.isLike)
+    },
     modifyPost() {
       return this.$router.push(`/posts/modify/${this.post.postId}`);
     },
     deletePost() {
-      return this.$store.dispatch("deleteSinglePost").then(
+      return this.$store.dispatch("deleteSinglePost", { postId: this.post.postId }).then(
         () => {
           this.$router.push("/posts");
         }
@@ -127,10 +150,11 @@ export default {
   &-like {
     background: none;
     border: none;
-    .selected {
-      color: orangered;
-    }
+  }
+  &-liked {
+    color: orangered;
   }
 }
+
 
 </style>
