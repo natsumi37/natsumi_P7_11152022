@@ -1,5 +1,5 @@
 <template>
-  <main class="post"> <!-- how to apply semantic tags in vue-->
+  <main class="post">
     <h1>Modify the post</h1>
     <div class="create-form">
       <div class="mb-3">
@@ -47,6 +47,9 @@ export default {
   computed: mapState({
     post: "singlePost"
   }),
+  // beforeMount() {
+  //   this.getSinglePost();
+  // },
   methods: {
     uploadContentImg(event) {
       const file = event.target.files[0]
@@ -59,6 +62,9 @@ export default {
         this.contentImg = reader.result
       }
     },
+    // getSinglePost() {
+    //   return this.$store.dispatch("getSinglePost");
+    // },
     checkUserForm() {
       this.errors = []
 
@@ -75,6 +81,7 @@ export default {
     modifyPost() {
       if (this.checkUserForm() === true) {
         return this.$store.dispatch("modifySinglePost", {
+          postId: this.post.postId,
           title: this.title,
           content: this.content,
           contentImgUrl: this.contentImgUrl,

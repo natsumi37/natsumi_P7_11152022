@@ -1,5 +1,5 @@
 <template>
-  <main class="post"> <!-- how to apply semantic tags in vue-->
+  <main class="post">
     <h1>Create a post</h1>
     <form method="post" enctype="multipart/form-data">
       <div class="create-form">
@@ -50,8 +50,6 @@ export default {
       content: "",
       contentImgUrl: "",
       userId: "",
-      readPostId: [],
-      likePostId: []
     }
   },
   methods: {
@@ -103,9 +101,6 @@ export default {
           title: this.title,
           content: this.content,
           contentImgUrl: this.contentImgUrl,
-          userId: "",
-          readPostId: [],
-          likePostId: []
         }).then(
           () => {
             console.log("Post created successfully!");
