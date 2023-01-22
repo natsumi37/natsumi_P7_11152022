@@ -1,5 +1,5 @@
 <template>
-  <main class="post"> <!-- how to write semantic tags in vue -->
+  <main class="post">
     <h1>See all posts</h1>
     <div class="align-cards" v-for="post in posts" v-bind:key="post.post_id">
       <RouterLink :to="`/posts/${post.post_id}`">
@@ -10,9 +10,9 @@
             <img :src="post.contentImgUrl" :alt="'picture of ' + post.title">
           </div>
           <div class="card-footer">
-            <button type="button" class="card-button" :class="{ selected: likePost }" @click="toggleLike(post)">
+            <div class="card-button" :class="{ 'card-liked': colorLike(post) }">
               <font-awesome-icon icon="fa-solid fa-thumbs-up" />
-            </button>
+            </div>
           </div>
         </div>
       </RouterLink>
@@ -27,7 +27,7 @@ export default {
   name: "PostsAll",
   data: function() {
     return {
-      likePost: false
+      isLike: false
     }
   },
   computed: {
@@ -36,12 +36,23 @@ export default {
       auth: "auth"
     })
   },
-  beforeMount(){
+  beforeMount() {
     this.getAllPosts()
+  },
+  mounted() {
+    this.colorLike()
   },
   methods: {
     getAllPosts() {
       return this.$store.dispatch("getAllPosts");
+    },
+    colorLike(post) { // showing an error saying cannot read properties of undefined "LikePosts"
+      console.log(post)
+      // const liked = post.LikePosts.some(targetPost => targetPost.userId === this.auth.userId)
+      // console.log(liked)
+      // if (liked) {
+      //   return true
+      // }
     }
   }
 }
