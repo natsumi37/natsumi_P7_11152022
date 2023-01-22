@@ -9,8 +9,8 @@ class PostDataService {
     return http.get(`/posts/${postId}`);
   }
 
-  getUnreadPosts() {
-    return http.get("/posts/unread");
+  getUnreadPosts(userId) {
+    return http.get(`/posts/unread/${userId}`);
   }
 
   createPost(data) {
@@ -29,8 +29,8 @@ class PostDataService {
     return http.post(`/posts/${postId}/read`, userId);
   }
 
-  likePost(postId, userId) { // like === 1, 0?
-    return http.post(`/posts/${postId}/like`, userId); // POST or DELETE
+  likePost(postId, userId) {
+    return http.post(`/posts/${postId}/like`, userId);
   }
 }
 
