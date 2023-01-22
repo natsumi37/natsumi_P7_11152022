@@ -1,4 +1,6 @@
 const { Sequelize, DataTypes } = require("sequelize");
+const User = require("./user");
+
 const sequelize = new Sequelize("testdb", "root", "mysqlpassword", {
   host: "localhost",
   dialect: "mysql",
@@ -45,12 +47,12 @@ const ReadPost = sequelize.define("ReadPost", {
   },
   postId: {
     type: DataTypes.INTEGER,
-    foreignKey: true,
+    // foreignKey: true,
     allowNull: false
   },
   userId: {
     type: DataTypes.INTEGER,
-    foreignKey: true,
+    // foreignKey: true,
     allowNull: false
   }},
   {
@@ -84,6 +86,14 @@ const LikePost = sequelize.define("LikePost", {
 
 // // define sequelize associations
 
+User.hasMany(Post, {
+  foreignKey: "userId"
+});
+Post.belongsTo(User, {
+  foreignKey: "userId",
+  targetKey: "user_id"
+});
+
 Post.hasMany(ReadPost, {
   foreignKey: "postId"
 });
@@ -100,12 +110,6 @@ LikePost.belongsTo(Post, {
   targetKey: "post_id"
 });
 
-// // check the model schemas of sequelize and mysql
-
-console.log("table: posts is ", Post === sequelize.models.posts);
-console.log("table: readpost is ", ReadPost === sequelize.models.readpost);
-console.log("table: likepost is ", LikePost === sequelize.models.likepost);
-
-// // export the models
+// // export models
 
 module.exports = { sequelize, Post, ReadPost, LikePost };
