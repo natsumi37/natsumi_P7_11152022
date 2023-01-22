@@ -5,6 +5,7 @@
       <RouterLink :to="`/posts/${post.post_id}`">
         <div class="card-container">
           <h2 class="card-title">{{ post.title }}</h2>
+          <p class="card-written">By {{ post.user.firstName }} {{  post.user.lastName }}</p>
           <p class="card-text">{{ post.content }}</p>
           <div class="card-media" v-show="post.contentImgUrl">
             <img :src="post.contentImgUrl" :alt="'picture of ' + post.title">
@@ -47,7 +48,7 @@ export default {
       return this.$store.dispatch("getAllPosts");
     },
     colorLike(post) { // showing an error saying cannot read properties of undefined "LikePosts"
-      console.log(post)
+      // console.log(post.LikePosts)
       // const liked = post.LikePosts.some(targetPost => targetPost.userId === this.auth.userId)
       // console.log(liked)
       // if (liked) {
@@ -95,8 +96,9 @@ a {
       width: 100%;
     }
   }
-  &-title {
+  &-written {
     border-bottom: solid 1px lightgray;
+    text-align: end;
   }
   &-media img {
     width: 200px;

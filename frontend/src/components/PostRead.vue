@@ -4,6 +4,7 @@
     <div class="align-cards">
       <div class="card-container">
         <h2 class="card-title">{{ post.title }}</h2>
+        <p class="card-written">By {{ post.userName }}</p>
         <p class="card-text">{{ post.content }}</p>
         <div class="card-media" v-show="post.contentImgUrl">
           <img :src="post.contentImgUrl" :alt="'picture of ' + post.title">
@@ -40,7 +41,7 @@ export default {
     // this.colorLike()
   },
   mounted() {
-    this.colorLike()
+    this.colorLike();
   },
   methods: {
     getSinglePost() {
@@ -64,13 +65,6 @@ export default {
       //   }
       // )
     },
-    likePost() {
-      this.isLike = !this.isLike;
-      return this.$store.dispatch("likePost", {
-        postId: this.post.postId,
-        userId: this.auth.userId
-      }); 
-    },
     colorLike() {
       console.log(this.post)
       const liked = this.post.LikePosts.some(post => post.userId === this.auth.userId)
@@ -79,6 +73,13 @@ export default {
         this.isLike = true
       }
       console.log("this.isLike = ", this.isLike)
+    },
+    likePost() {
+      this.isLike = !this.isLike;
+      return this.$store.dispatch("likePost", {
+        postId: this.post.postId,
+        userId: this.auth.userId
+      }); 
     },
     modifyPost() {
       return this.$router.push(`/posts/modify/${this.post.postId}`);
@@ -121,8 +122,9 @@ export default {
       width: 100%;
     }
   }
-  &-title {
+  &-written {
     border-bottom: solid 1px lightgray;
+    text-align: end;
   }
   &-media img {
     width: 200px;

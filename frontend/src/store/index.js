@@ -36,6 +36,7 @@ export default createStore({
       content: "",
       contentImgUrl: "",
       userId: "",
+      userName: "",
       ReadPosts: [],
       LikePosts: []
     },
@@ -83,6 +84,7 @@ export default createStore({
       state.singlePost.content = data.content;
       state.singlePost.contentImgUrl = data.contentImgUrl;
       state.singlePost.userId = data.userId;
+      state.singlePost.userName = data.user.firstName + " " + data.user.lastName;
       state.singlePost.ReadPosts = data.ReadPosts;
       state.singlePost.LikePosts = data.LikePosts;
     },
