@@ -16,11 +16,11 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to Groupomania!" })
 });
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 app.use("/api/auth", userRoutes);
 app.use("/posts", postRoutes);
-app.use("/images", express.static(path.join(__dirname, "images/users")));
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 module.exports = app;
