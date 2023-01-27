@@ -7,7 +7,7 @@ const { Sequelize, Op } = require("sequelize");
 
 
 exports.signup = (req, res, next) => {
-  console.log(req.body)
+  req.body.user = JSON.parse(req.body.user)
   bcrypt.hash(req.body.user.password, 10).then(
     (hash) => {
       const url = req.protocol + "://" + req.get("host");
@@ -51,8 +51,6 @@ exports.login = (req, res, next) => {
       console.log(user);
       bcrypt.compare(req.body.password, user.password).then(
         (valid) => {
-          console.log(req.body.password)
-          console.log(user.password)
           if (!valid) {
             return res.status(401).json({
               error: new Error("Incorrect password!")
@@ -95,10 +93,10 @@ exports.delete = async (req, res, next) => {
     const filename = targetUser.profilePicUrl.split("/images/")[1];
     fs.unlink("images/" + filename, (error) => {
       if (error) {
-        throw error
+        throw error;
       }
-    })
-  }
+    });
+  };
   const findPosts = await Post.findAll({ where: { userId: req.params.id }});
   const userCreatedPosts = findPosts.map(post => post.post_id);
   await ReadPost.destroy({ where: { userId: req.params.id }});

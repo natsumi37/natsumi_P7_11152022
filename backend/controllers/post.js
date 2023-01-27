@@ -36,6 +36,8 @@ exports.getOnePost = (req, res, next) => {
 
 exports.createPost = (req, res, next) => {
   const url = req.protocol + "://" + req.get("host");
+  req.body.post = JSON.parse(req.body.post);
+  // console.log(req.body.post)
   let contentImgUrl = "";
   if (req.file) {
     contentImgUrl = url + "/images/" + req.file.filename;
@@ -44,8 +46,7 @@ exports.createPost = (req, res, next) => {
     title: req.body.post.title,
     content: req.body.post.content,
     contentImgUrl,
-    postBy: req.body.post.postBy,
-    userId: req.auth.userId,
+    userId: req.body.post.userId,
   });
   console.log(post);
   post.save().then(
@@ -65,8 +66,19 @@ exports.createPost = (req, res, next) => {
 
 exports.modifyPost = async (req, res, next) => {
   const targetPost = await Post.findOne({ where: { post_id: req.params.id }});
+
+  const url = req.protocol + "://" + req.get("host");
+  req.body.post = JSON.parse(req.body.post);
   let contentImgUrl = targetPost.contentImgUrl;
   if (req.file) {
+    if (contentImgUrl) {
+      const filename = contentImgUrl.split("/images/")[1];
+      fs.unlink("images/" + filename, (error) => {
+        if (error) {
+          throw error;
+        }
+      });
+    }
     contentImgUrl = url + "/images/" + req.file.filename;
   }
   await targetPost.update({
@@ -136,37 +148,6 @@ exports.readPost = async (req, res, next) => {
       }
     );
   }
-
-  // const readPost = new ReadPost({
-  //   postId: req.params.id,
-  //   userId: req.body.userId
-  // });
-  // sequelize.query("SELECT * FROM posts WHERE post_id IN (SELECT postId FROM readpost WHERE postId = "+req.params.id+" AND userId = "+req.body.userId+")").then(
-  //   ([post, meta]) => {
-  //     console.log(post)
-  //     if (!post.length) {
-  //       readPost.save().then(
-  //         () => {
-  //           res.status(201).json({
-  //             message: "Created ReadPost!"
-  //           });
-  //         }
-  //       ).catch(
-  //         (error) => {
-  //           res.status(400).json({
-  //             error: error
-  //           });
-  //         }
-  //       );
-  //     }
-  //   }
-  // ).catch(
-  //   (error) => {
-  //     res.status(400).json({
-  //       error: error
-  //     });
-  //   }
-  // );
 };
 
 exports.likePost = async (req, res, next) => {
