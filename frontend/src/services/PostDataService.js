@@ -13,12 +13,12 @@ class PostDataService {
     return http.get(`/posts/unread/${userId}`);
   }
 
-  createPost(data) {
-    return http.post("/posts", data);
+  createPost(formData, config) {
+    return http.post("/posts", formData, config);
   }
 
-  modifyPost(postId, data) {
-    return http.put(`/posts/${postId}`, data);
+  modifyPost(postId, formData, config) {
+    return http.put(`/posts/${postId}`, formData, config);
   }
 
   deletePost(postId) {

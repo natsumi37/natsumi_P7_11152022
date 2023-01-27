@@ -104,12 +104,6 @@ export default createStore({
     deleteSinglePost(state) {
       state.singlePost = {};
     },
-    // readPost(state) {
-    //   state.singlePost.readPostId.push(state.auth.userId);
-    // },
-    // likePost(state) {
-    //   state.singlePost.likePostId.push(state.auth.userId);
-    // },
     getUnreadPosts(state, data) {
       state.unreadPosts = data;
     },
@@ -119,18 +113,23 @@ export default createStore({
   },
 
   actions: {
-    async signup({ commit }, { firstName, lastName, email, password, profilePicUrl }) {
+    async signup({ commit }, { firstName, lastName, email, password, file }) {
+      const formData = new FormData();
       const user = {
-        user: {
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          password: password,
-          profilePicUrl: profilePicUrl
-        }
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
       };
+      formData.append("user", JSON.stringify(user))      
+      formData.append("file", file)
+
+      const config = {
+        headers: formData.getHeaders ? formData.getHeaders() : { "Content-Type": "multipart/form-data" }
+      };
+
       try {
-        const signupResult = await UserDataService.signup(user);
+        const signupResult = await UserDataService.signup(formData, config);
         if (signupResult.data) {
           commit("signup", user);
         } else {
@@ -158,6 +157,7 @@ export default createStore({
         email: email,
         password: password
       };
+      localStorage.removeItem("vuex");
       try {
         const loginResult = await UserDataService.login(user);
         if (loginResult.data) {
@@ -203,17 +203,22 @@ export default createStore({
         console.log(error);
       }
     },
-    async createSinglePost({ commit, state }, { title, content, contentImgUrl }) {
+    async createSinglePost({ commit, state }, { title, content, file }) {
+      const formData = new FormData();
       const post = {
-        post: {
-          title: title,
-          content: content,
-          contentImgUrl: contentImgUrl,
-          userId: state.auth.userId
-        }
+        title: title,
+        content: content,
+        userId: state.auth.userId
       };
+      formData.append("post", JSON.stringify(post))      
+      formData.append("file", file)
+
+      const config = {
+        headers: formData.getHeaders ? formData.getHeaders() : { "Content-Type": "multipart/form-data" }
+      };
+
       try {
-        const createSinglePostResult = await PostDataService.createPost(post);
+        const createSinglePostResult = await PostDataService.createPost(formData, config);
         if (createSinglePostResult.data) {
           commit("createSinglePost", createSinglePostResult.data);
         }
@@ -221,15 +226,22 @@ export default createStore({
         console.log(error);
       }
     },
-    async modifySinglePost({ commit, state }, { postId, title, content, contentImgUrl }) {
+    async modifySinglePost({ commit, state }, { postId, title, content, file }) {
+      const formData = new FormData();
       const post = {
         title: title,
         content: content,
-        contentImgUrl: contentImgUrl,
         userId: state.auth.userId
       };
+      formData.append("post", JSON.stringify(post))      
+      formData.append("file", file)
+
+      const config = {
+        headers: formData.getHeaders ? formData.getHeaders() : { "Content-Type": "multipart/form-data" }
+      };
+
       try {
-        const modifySinglePostResult = await PostDataService.modifyPost(postId, { post });
+        const modifySinglePostResult = await PostDataService.modifyPost(postId, formData, config);
         if (modifySinglePostResult.data) {
           commit("modifySinglePost", modifySinglePostResult.data);
         }

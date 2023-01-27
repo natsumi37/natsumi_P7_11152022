@@ -1,8 +1,8 @@
 import http from "../http-common"
 
 class UserDataService {
-  signup(data) {
-    return http.post("/api/auth/signup", data);
+  signup(formData, config) {
+    return http.post("/api/auth/signup", formData, config);
   }
 
   login(data) {
