@@ -2,7 +2,7 @@
   <header class="header-box">
     <img class="header-logo" src="@/assets/logo/icon-left-font-monochrome-white.png" alt="Groupomania logo">
     <img class="header-profile-pic" v-if="loggedinUser.profilePicUrl" :src="loggedinUser.profilePicUrl" :alt="'profile picture of ' + loggedinUser.firstName + ' ' + loggedinUser.lastName">
-    <img class="header-profile-pic" v-else src="../../public/profile-no-image-icon.png" :alt="'no profile image of ' + loggedinUser.firstName + ' ' + loggedinUser.lastName">
+    <img class="header-profile-pic" v-else src="../../public/no-profile-image-icon.png" :alt="'no profile image of ' + loggedinUser.firstName + ' ' + loggedinUser.lastName">
       <ul class="navbar-nav">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -87,12 +87,11 @@ export default {
   &-profile-pic {
     width: 50px;
     height: 50px;
-    // border: white solid 1px;
     border-radius: 50%;
     margin-left: auto;
-    // object-fit: cover;
     z-index: 5;
     margin-right: 10px;
+    object-fit: cover;
   }
 }
 

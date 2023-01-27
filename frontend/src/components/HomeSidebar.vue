@@ -17,7 +17,6 @@
         <li title="See unread posts">
           <p>Unread</p>
           <font-awesome-icon icon="fa-solid fa-envelope" />
-          <!-- <p class="notification" v-if="countUnreadPosts > 0">{{ countUnreadPosts }}</p> -->
         </li>
       </router-link>
       <router-link to="/employees">
@@ -34,25 +33,22 @@
 import { mapState, mapGetters } from "vuex"
 
 export default {
-  computed:
-  mapState([
-    "posts"
-  ]),
-  ...mapGetters([
-    "getUnreadPosts",
-    "countUnreadPosts"
-  ])
+  computed: {
+    ...mapState([
+      "posts",
+    ])
+  }
 }
 
 </script>
 
 <style lang="scss" scoped>
 .nav-container {
-  width: 350px;
-  // height: 100vh;
+  width: 170px;
+  min-height: 100vh;
   position: sticky;
   background-color: rgb(242, 240, 240);
-  z-index: 2;
+  z-index: 3;
 }
 
 .nav-items {
@@ -76,13 +72,6 @@ export default {
     a {
       text-decoration: none;
     }
-    .notification {
-      width: 15px;
-      height: 15px;
-      border: solid 3px red;
-      border-radius: 50%;
-      padding: 3px;
-    }
   }
   a {
   text-decoration: none;
@@ -96,7 +85,7 @@ export default {
   }
   .nav-container {
     width: 100%;
-    height: 20%;
+    min-height: 20%;
     margin-top: auto;
     position: sticky;
     bottom: 0;
