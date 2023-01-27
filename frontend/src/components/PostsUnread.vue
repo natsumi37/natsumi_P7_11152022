@@ -45,12 +45,7 @@ export default {
       return this.$store.dispatch("getUnreadPosts");
     },
     colorLike(post) {
-      console.log(post)
-      // const liked = post.LikePosts.some(targetPost => targetPost.userId === this.auth.userId)
-      // console.log(liked)
-      // if (liked) {
-      //   return true
-      // }
+      return post && post.LikePosts.some(post => post.userId === this.auth.userId)
     }
   }
 }
@@ -59,28 +54,35 @@ export default {
 
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 a {
   text-decoration: none;
   color: black;
 }
 .post {
-  width: 100%;
+  width: calc(90% - 80px);
   padding: 40px;
+  @media screen and (max-width: 760px) {
+    width: 100%;
+    padding: 20px;
+  }
 }
-
 .align-cards {
   display: flex;
   flex-direction: column;
-  margin: 10px 0;
+  width: 80%;
+  margin-top: 15px;
+  @media screen and (max-width: 760px) {
+    width: 100%;
+  }
 }
 
 .card {
   &-container {
     display: flex;
     flex-direction: column;
-    width: 80%;
-    height: 350px;
+    width: 100%;
+    height: 400px;
     padding: 20px;
     border: solid 2px lightgrey;
     border-radius: 5px;
@@ -89,22 +91,29 @@ a {
       border: none;
       box-shadow: 1px 1px 8px 1px grey;
     }
-    @media screen and (max-width: 760px) {
-      width: 100%;
-    }
+    // @media screen and (max-width: 760px) {
+    //   width: 100%;
+    // }
+  }
+  &-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   &-written {
     border-bottom: solid 1px lightgray;
     text-align: end;
   }
   &-media img {
-    width: 200px;
+    display: block;
+    width: 180px;
     height: 200px;
     object-fit: contain;
+    margin: auto;
   }
   &-footer {
     display: flex;
-    justify-content: end;
+    // justify-content: end;
     gap: 20px;
     font-size: x-large;
     border: none;
@@ -113,9 +122,14 @@ a {
   &-button {
     background: none;
     border: none;
-    .selected {
-      color: orangered;
-    }
+    margin-left: auto;
+  }
+  &-like {
+    background: none;
+    border: none;
+  }
+  &-liked {
+    color: orangered;
   }
 }
 
