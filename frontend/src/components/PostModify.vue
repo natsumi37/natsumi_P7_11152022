@@ -11,8 +11,18 @@
         <textarea class="form-control" id="content" rows="8" v-model="content"></textarea>
       </div>
       <div class="mb-3">
-        <label for="contentImg" class="form-label">Upload files</label>
-        <input class="form-control" type="file" id="contentImg" @change="uploadContentImg">
+        <label for="contentImg" class="form-label">Upload file</label>
+        <input
+            class="form-control"
+            type="file"
+            accept="image/png, image/jpeg, image/jpg"
+            id="contentImgUrl"
+            name="file"
+            @change="uploadContetnImg"
+          >
+      </div>
+      <div class="mb-3" v-if="contentImgUrl">
+        <img :src="contentImgUrl" alt="image preview" width="250"/>
       </div>
 
       <p class="error" v-if="errors.length">
@@ -39,9 +49,10 @@ export default {
       title: "",
       content: "",
       contentImgUrl: "",
+      file: "",
       userId: "",
-      readPostId: "",
-      likePostId: ""
+      // ReadPosts: "",
+      // LikePosts: ""
     }
   },
   computed: mapState({
@@ -51,16 +62,17 @@ export default {
   //   this.getSinglePost();
   // },
   methods: {
-    uploadContentImg(event) {
-      const file = event.target.files[0]
-      this.createContentImg(file)
+    uploadContetnImg(event) {
+      this.file = event.target.files[0]
+      this.filePreview()
     },
-    createContentImg(file){
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onload = () => {
-        this.contentImg = reader.result
+    filePreview() {
+      const reader = new FileReader();
+      reader.onload = event => {
+        console.log(event.target)
+        this.contentImgUrl = event.target.result;
       }
+      reader.readAsDataURL(this.file);
     },
     // getSinglePost() {
     //   return this.$store.dispatch("getSinglePost");
@@ -84,10 +96,11 @@ export default {
           postId: this.post.postId,
           title: this.title,
           content: this.content,
-          contentImgUrl: this.contentImgUrl,
+          // contentImgUrl: this.contentImgUrl,
+          file: this.file,
           userId: this.userId,
-          readPostId: this.readPostId,
-          likePostId: this.likePostId
+          // ReadPosts: this.ReadPosts,
+          // LikePosts: this.LikePosts
         }).then(
           () => {
             console.log("Post updated successfully!");
@@ -105,8 +118,12 @@ export default {
 
 <style lang="scss">
 .post {
-  width: 100%;
+  width: calc(90% - 80px);
   padding: 40px;
+  @media screen and (max-width: 760px) {
+    width: 100%;
+    padding: 20px;
+  }
 }
 
 .form-btn {

@@ -21,12 +21,16 @@
     <div class="mb-2">
       <label for="profilePicUrl" class="form-label">Profile picture</label>
       <input 
-        type="file"
         class="form-control"
+        type="file"
+        accept="image/png, image/jpeg, image/jpg"
         id="profilePicUrl"
-        accept=".jpg, .jpeg, .png"
+        name="file"
         @change="uploadProfilePic"
       />
+    </div>
+    <div class="mb-3" v-if="profilePicUrl">
+      <img :src="profilePicUrl" alt="image preview" width="250"/>
     </div>
 
     <p class="error" v-if="errors.length">
@@ -36,9 +40,7 @@
       </ul>
     </p>
 
-    <!-- <router-link to="/posts"> -->
-      <button class="form-btn" type="button" @click="signup">Signup</button>
-    <!-- </router-link> -->
+    <button class="form-btn" type="button" @click="signup">Signup</button>
   </div>
 </template>
 
@@ -54,19 +56,21 @@ export default {
       email: "",
       password: "",
       profilePicUrl: "",
+      file: ""
     }
   },
   methods: {
     uploadProfilePic(event) {
-      const file = event.target.files[0]
-      this.createProfilePic(file)
+      this.file = event.target.files[0]
+      this.filePreview()
     },
-    createProfilePic(file){
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onload = () => {
-        this.profilePicUrl = reader.result
+    filePreview() {
+      const reader = new FileReader();
+      reader.onload = event => {
+        console.log(event.target)
+        this.profilePicUrl = event.target.result;
       }
+      reader.readAsDataURL(this.file);
     },
     checkUserForm() {
       this.errors = [];
@@ -94,7 +98,8 @@ export default {
           lastName: this.lastName,
           email: this.email,
           password: this.password,
-          profilePicUrl: this.profilePicUrl
+          profilePicUrl: this.profilePicUrl,
+          file: this.file
         }).then(
           () => {
             console.log("User signup successfully!")
