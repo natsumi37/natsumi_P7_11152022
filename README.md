@@ -4,6 +4,13 @@ Student project at OpenClassrooms
 ✅What I did<br>
 Develop both frontend and backend of a web app from the scratch using Vue CLI and MySQL database
 
+✅Run Server<br>
+Frontend<br>
+http://localhost:8080
+
+Backend<br>
+http://localhost:3000
+
 ✅Project Summary<br>
 Project 7: Build a Full-Stack Solution<br>
 Scenario:<br>
